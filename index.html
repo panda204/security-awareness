@@ -3,53 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Warning</title>
+    <title>Critical System Update</title>
     <style>
+        /* Base Styles */
         body { 
+            margin: 0; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: #f8d7da; 
-            color: #721c24; 
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- STATE 1: The Fake Download Screen --- */
+        #download-screen { 
+            height: 100vh; 
             display: flex; 
+            flex-direction: column; 
             justify-content: center; 
             align-items: center; 
+            background: #f4f4f5; /* Generic light grey */
+            color: #3f3f46; 
+        }
+        
+        .spinner {
+            border: 4px solid #e4e4e7;
+            border-top: 4px solid #2563eb; /* Corporate blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .progress-container { 
+            width: 350px; 
+            height: 8px; 
+            background: #e4e4e7; 
+            border-radius: 4px; 
+            overflow: hidden; 
+            margin: 20px 0; 
+        }
+        
+        #progress-bar { 
+            width: 0%; 
+            height: 100%; 
+            background: #2563eb; 
+            transition: width 0.2s ease; 
+        }
+        
+        .system-text { font-size: 1.1rem; color: #52525b; }
+        .warning-text { font-size: 0.9rem; color: #71717a; margin-top: 10px; }
+
+
+        /* --- STATE 2: The Educational Reveal Screen --- */
+        #reveal-screen { 
+            display: none; /* Hidden by default */
             height: 100vh; 
-            margin: 0; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            background-color: #f8d7da; 
+            color: #721c24; 
             text-align: center; 
         }
+
+        /* Flashing animation to simulate an alarm state */
+        @keyframes flashAlert { 
+            0%, 100% { background-color: #f8d7da; } 
+            50% { background-color: #f1b0b7; } 
+        }
+        .alarm-state { animation: flashAlert 1s infinite; }
+
         .container { 
             background: white; 
-            padding: 2rem; 
+            padding: 3rem; 
             border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            border: 2px solid #f5c6cb; 
-            max-width: 500px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            border: 3px solid #dc3545; 
+            max-width: 600px; 
+            z-index: 10;
         }
-        h1 { 
-            font-size: 3rem; 
-            margin-bottom: 1rem; 
-            color: #dc3545; 
-        }
-        p { 
-            font-size: 1.2rem; 
-            line-height: 1.6; 
-        }
+        
+        h1 { font-size: 3.5rem; margin-top: 0; margin-bottom: 1rem; color: #dc3545; text-transform: uppercase;}
+        p { font-size: 1.2rem; line-height: 1.6; }
+        
         .tip { 
             font-weight: bold; 
-            margin-top: 1.5rem; 
+            margin-top: 2rem; 
             color: #155724; 
             background: #d4edda; 
-            padding: 10px; 
-            border-radius: 4px; 
+            padding: 15px; 
+            border-radius: 6px; 
+            font-size: 1.1rem;
+            border-left: 5px solid #28a745;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>TRUST NO ONE!</h1>
-        <p>You just clicked a link without verifying the destination. If this were a real malicious link, this could have been a credential harvester or a malware download.</p>
-        <div class="tip">
-            Pro Tip: Always hover over a link to inspect the URL before clicking. If it doesn't look correct, don't click!
-        </ div>
+
+    <div id="download-screen">
+        <div class="spinner"></div>
+        <h2 style="margin-bottom: 5px;">Executing Critical Update</h2>
+        <div class="system-text">Downloading payload and extracting background files...</div>
+        
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <div class="system-text" id="percentage-text">0% Complete</div>
+        <div class="warning-text">Do not close your browser or disconnect from the network.</div>
     </div>
+
+    <div id="reveal-screen">
+        <div class="container">
+            <h1>TRUST NO ONE!</h1>
+            <p>You just clicked a link without verifying the destination.</p>
+            <p>What looked like a harmless "System Update" could have easily been a script deploying malware or ransomware to your device in the background.</p>
+            <div class="tip">
+                Pro Tip: Always hover over a link to inspect the destination URL before clicking.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript logic to control the simulation
+        let progress = 0;
+        const progressBar = document.getElementById('progress-bar');
+        const percentageText = document.getElementById('percentage-text');
+        const downloadScreen = document.getElementById('download-screen');
+        const revealScreen = document.getElementById('reveal-screen');
+
+        // This function simulates the fake download progressing
+        const downloadInterval = setInterval(() => {
+            // Jump the progress forward by random amounts to look realistic
+            progress += Math.floor(Math.random() * 15) + 8; 
+            
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(downloadInterval);
+                triggerTheTrap(); // Trigger the reveal when it hits 100%
+            }
+            
+            progressBar.style.width = progress + '%';
+            percentageText.innerText = progress + '% Complete';
+        }, 350); // Updates every 350 milliseconds
+
+        // This function handles the transition from State 1 to State 2
+        function triggerTheTrap() {
+            // Wait half a second at 100% to let the user process it
+            setTimeout(() => {
+                // Change the page title to add to the reveal
+                document.title = "WARNING: Unsafe Link Clicked";
+                
+                // Hide the download screen, show the reveal screen
+                downloadScreen.style.display = 'none';
+                revealScreen.style.display = 'flex';
+                
+                // Add the flashing red alarm class to the body
+                document.body.classList.add('alarm-state');
+            }, 600);
+        }
+    </script>
+
 </body>
 </html>
