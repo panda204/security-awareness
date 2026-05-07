@@ -41,55 +41,15 @@
             padding: 10px; 
             border-radius: 4px; 
         }
-        .counter-display {
-            margin-top: 20px; 
-            font-weight: bold; 
-            color: #333;
-            font-size: 1.1rem;
-            border-top: 1px solid #ccc;
-            padding-top: 15px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>TRUST NO ONE!</h1>
-        <p>You just clicked a link without verifying the destination. In a real-world scam, this could have been a credential harvester or a malware download.</p>
-       <div class="tip">
-            Pro Tip: Always hover over a link to inspect the URL before clicking.
-        </div>
-        
-        <div class="counter-display">
-            Total "Victims": <span id="count">Loading...</span>
-        </div>
-    </div> ```
-    <script>
-        // 1. CHANGED NAMESPACE: Using a more randomized string prevents rate-limiting collisions 
-        // with other people using this public API.
-        const namespace = "scam-demo-beta-9942"; 
-        const key = "clicks";
-
-        async function updateCounter() {
-            try {
-                const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                
-                document.getElementById('count').innerText = data.count;
-            } catch (error) {
-                console.error("Tracking blocked by browser:", error);
-                
-                // 2. PRESENTATION FAILSAFE: If the user's browser blocks the tracker, 
-                // we simulate a number so your presentation slide doesn't look broken.
-                // It grabs a random number between 12 and 45.
-                const fakeCount = Math.floor(Math.random() * (45 - 12 + 1)) + 12;
-                document.getElementById('count').innerText = `${fakeCount} (Tracker Blocked)`;
-            }
-        }
-
-        updateCounter();
-    </script>
+        <p>You just clicked a link without verifying the destination. If this were a real malicious link, this could have been a credential harvester or a malware download.</p>
+        <div class="tip">
+            Pro Tip: Always hover over a link to inspect the URL before clicking. If it doesn't look correct, don't click!
+        </ div>
+    </div>
 </body>
 </html>
