@@ -20,5 +20,31 @@
             Pro Tip: Always hover over a link to inspect the URL before clicking.
         </div>
     </div>
+<!-- Visible Counter Display -->
+<div style="margin-top: 20px; font-weight: bold; color: #333;">
+    Total "Victims": <span id="count">0</span>
+</div>
+
+<script>
+    // Replace 'your-unique-namespace' with a unique name for your presentation
+    const namespace = "security-awareness-presentation-2026";
+    const key = "scam-click-counter";
+
+    async function updateCounter() {
+        try {
+            // This API call increments the counter by 1 and returns the new value
+            const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
+            const data = await response.json();
+            
+            // Update the HTML element with the new count
+            document.getElementById('count').innerText = data.count;
+        } catch (error) {
+            console.error("Counter failed to load:", error);
+            document.getElementById('count').innerText = "Error";
+        }
+    }
+
+    updateCounter();
+</script>
 </body>
 </html>
